@@ -16,6 +16,11 @@ globalThis.crypto = crypto;
 
 // Test decryption of a message
 async function test_decrypt(privkey, pubkey, data) {
+    // Will validate that the data is a non-empty string
+    if (typeof data !== 'string' || data.trim() === '') {
+        throw new Error('Invalid data input');
+    }
+    
     var utf8Decoder = new TextDecoder("utf-8");
     let [ctb64, ivb64] = data.split("?iv=");
     let key = secp256k1.getSharedSecret(privkey, "02" + pubkey);
@@ -80,6 +85,11 @@ let sub = await relay.sub([{
 // receive events
 let events = []
 sub.on('event', event => {
+    // Will validate that event.content is a non-empty string
+    if (typeof event.content !== 'string' || event.content.trim() === '') {
+        console.error('Invalid event content');
+        return;
+    }
     events.push(event)
 })
 sub.on('eose', () => {
